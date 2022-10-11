@@ -422,7 +422,7 @@
 
         let a = '';
 
-        let mappedArr = arrIds.map((currVal) => {
+        let mappedArr = arrIds.map((currVal, index) => {
 
           //let result = await fetch('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=33594065'); Source
 
@@ -452,7 +452,7 @@
 
                     <div class="services-content">
                       <h4 class="services-title">
-                        <a href="javascript:void(0)">Faster Automated Analysis</a>
+                        <a href="javascript:void(0)">Research ${index+1}</a>
                       </h4>
                       <p class="text">
                         Lorem ipsum dolor sit amet,consetetur sadipscing elitr,
