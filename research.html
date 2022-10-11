@@ -83,7 +83,7 @@
                 >
                   <ul id="nav" class="navbar-nav ms-auto">
                     <li class="nav-item">
-                      <a class="page-scroll active" href="#home">HOME</a>
+                      <a class="active" href="index.html">HOME</a>
                     </li>
                     <li class="nav-item">
                       <a class="page-scroll" href="#features">SOLUTIONS</a>
@@ -407,7 +407,7 @@
         //https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=33594065&version=2.0
 
         let apiUrl = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=33594065';
-        let url = 'https://pubmed.ncbi.nlm.nih.gov/35767571/';
+        let url = 'https://pubmed.ncbi.nlm.nih.gov/';
 
         let arrIds = [
                 '35767571',
@@ -424,25 +424,6 @@
 
         let mappedArr = arrIds.map((currVal, index) => {
 
-          //let result = await fetch('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=33594065'); Source
-
-
-          fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=${currVal}`)
-                  .then((response) => response.text())
-                  .then((data) => {
-
-                    let parser = new DOMParser();
-                    let xmlDoc = parser.parseFromString(data, "text/xml");
-
-                    let SortTitle = xmlDoc.querySelector("SortTitle").innerHTML;
-                    let Source = xmlDoc.querySelector("Source").innerHTML;
-
-                    console.log(SortTitle)
-                  });
-
-          //console.log(result);
-
-
           let elm = `<div class="col-lg-4 col-md-7 col-sm-8">
                   <div
                           class="single-services text-center mt-30 wow fadeIn"
@@ -458,7 +439,7 @@
                         Lorem ipsum dolor sit amet,consetetur sadipscing elitr,
                         seddiam nonu eirmod tempor invidunt labore.
                       </p>
-                      <a class="more" target="_blank" href="${currVal}"
+                      <a class="more" target="_blank" href="${url}${currVal}"
                       >Read More <i class="lni lni-chevron-right"> </i>
                       </a>
                     </div>
