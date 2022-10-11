@@ -402,9 +402,36 @@
 
     <script>
 
-      (()=>{
+      (async ()=>{
+
+        /*let myPromise = new Promise((resolve, reject)=>{
+
+          setTimeout(function (){
+            resolve();
+
+            console.log('ccccc')
+          }, 2000)
+
+          console.log('aaaaaa')
+
+        });
+
+        //let res = await myPromise;
+
+        myPromise.then((dd)=>{
+          console.log(dd);
+        })
+
+        console.log('bbbb')
+        //console.log(res)
+
+        return 0;*/
+
 
         //https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=33594065&version=2.0
+        let mainObject = {
+          researchArr: []
+        };
 
         let apiUrl = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=33594065';
         let url = 'https://pubmed.ncbi.nlm.nih.gov/35767571/';
@@ -420,16 +447,14 @@
                 '33594065'
         ];
 
-        let a = '';
 
-        let mappedArr = arrIds.map((currVal, index) => {
+        let fetchData = (id) =>{
 
-          //let result = await fetch('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=33594065'); Source
-
-
-          fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=${currVal}`)
+          fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=${id}`)
                   .then((response) => response.text())
                   .then((data) => {
+
+                    //console.log(id)
 
                     let parser = new DOMParser();
                     let xmlDoc = parser.parseFromString(data, "text/xml");
@@ -437,13 +462,25 @@
                     let SortTitle = xmlDoc.querySelector("SortTitle").innerHTML;
                     let Source = xmlDoc.querySelector("Source").innerHTML;
 
-                    console.log(SortTitle)
+                    mainObject.researchArr.push({
+                      SortTitle,
+                      Source
+                    });
+
+                    let mElm = document.querySelector(`#id-${id}`);
+                    mElm.querySelector('.services-title a').innerHTML = Source;
+                    mElm.querySelector('.services-title + .text').innerHTML = SortTitle;
+
+                    //console.log(SortTitle)
                   });
 
-          //console.log(result);
+        }
 
 
-          let elm = `<div class="col-lg-4 col-md-7 col-sm-8">
+        let mappedArr = arrIds.map((currVal, index) => {
+
+
+          let elm = `<div class="col-lg-4 col-md-7 col-sm-8" id="id-${currVal}">
                   <div
                           class="single-services text-center mt-30 wow fadeIn"
                           data-wow-duration="1s"
@@ -468,11 +505,20 @@
           return elm;
         });
 
-        //console.log(mappedArr);
+        //console.log(mainObject);
 
         let researchList = document.querySelector('#research-list');
 
         researchList.innerHTML = mappedArr.join("");
+
+        let i = 0;
+        (function rcrsn(){
+          if (i < arrIds.length) {
+            fetchData(arrIds[i]);
+            i++;
+            setTimeout(rcrsn, 1000);
+          }
+        })()
 
         return 0;
       })()
