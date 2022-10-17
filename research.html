@@ -402,29 +402,51 @@
 
     <script>
 
-      (()=>{
+      (async ()=>{
 
-        //https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=33594065&version=2.0
-
-        let apiUrl = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=33594065';
-        let url = 'https://pubmed.ncbi.nlm.nih.gov/';
 
         let arrIds = [
-                '35767571',
-                '35582459',
-                '35361823',
-                '35325322',
-                '35205252',
-                '34802461',
-                '34458692',
-                '33594065'
+          '35767571',
+          '35582459',
+          '35361823',
+          '35325322',
+          '35205252',
+          '34802461',
+          '34458692',
+          '33594065'
         ];
 
-        let a = '';
+
+        let fetchData = (id) =>{
+
+          fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&version=2.0&id=${id}`)
+                  .then((response) => response.text())
+                  .then((data) => {
+
+                    //console.log(id)
+
+                    let parser = new DOMParser();
+                    let xmlDoc = parser.parseFromString(data, "text/xml");
+
+                    let SortTitle = xmlDoc.querySelector("SortTitle").innerHTML;
+                    let Source = xmlDoc.querySelector("Source").innerHTML;
+
+
+
+                    let mElm = document.querySelector(`#id-${id}`);
+                    mElm.querySelector('.services-title a').innerHTML = Source;
+                    mElm.querySelector('.services-title + .text').innerHTML = SortTitle;
+
+                    //console.log(SortTitle)
+                  });
+
+        }
+
 
         let mappedArr = arrIds.map((currVal, index) => {
 
-          let elm = `<div class="col-lg-4 col-md-7 col-sm-8">
+
+          let elm = `<div class="col-lg-4 col-md-7 col-sm-8" id="id-${currVal}">
                   <div
                           class="single-services text-center mt-30 wow fadeIn"
                           data-wow-duration="1s"
@@ -439,7 +461,7 @@
                         Lorem ipsum dolor sit amet,consetetur sadipscing elitr,
                         seddiam nonu eirmod tempor invidunt labore.
                       </p>
-                      <a class="more" target="_blank" href="${url}${currVal}"
+                      <a class="more" target="_blank" href="https://pubmed.ncbi.nlm.nih.gov/${currVal}"
                       >Read More <i class="lni lni-chevron-right"> </i>
                       </a>
                     </div>
@@ -449,11 +471,19 @@
           return elm;
         });
 
-        //console.log(mappedArr);
 
         let researchList = document.querySelector('#research-list');
 
         researchList.innerHTML = mappedArr.join("");
+
+        let i = 0;
+        (function rcrsn(){
+          if (i < arrIds.length) {
+            fetchData(arrIds[i]);
+            i++;
+            setTimeout(rcrsn, 1000);
+          }
+        })()
 
         return 0;
       })()
